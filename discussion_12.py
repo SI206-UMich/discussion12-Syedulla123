@@ -42,10 +42,14 @@ def add_employee(filename, cur, conn):
 
 # TASK 2: GET JOB AND HIRE_DATE INFORMATION
 def job_and_hire_date(cur, conn):
-    cur.execute('select jobs.job_title, employees.hire_date from jobs join employees on jobs.job_id = employees.job_id order by employees.hire_date limit 1')
-    x = cur.fetchone()
-    return x[0]
-
+    cur.execute()
+    res=cur.fetchall()
+    conn.commit()
+    #print(res)
+    s=sorted(res, key= lambda x; x[0])
+    #print(s)
+    return s[0][1]
+    
 # TASK 3: IDENTIFY PROBLEMATIC SALARY DATA
 # Apply JOIN clause to match individual employees
 def problematic_salary(cur, conn):
@@ -57,7 +61,22 @@ def problematic_salary(cur, conn):
 
 # TASK 4: VISUALIZATION
 def visualization_salary_data(cur, conn):
-    pass
+    plt.figure()
+    cur.execute('select jobs.job_title, employees.salary from employees join jobs on jobs.job_id = employees.job_id')
+    res = cur.fetchall()
+    conn.commit()
+    x,y = zip(*res)
+    plt.scatter(x,y)
+
+    cur.execute('select jobs.job_title, jobs.min_salary from jobs')
+    res = cur.fetchall()
+    conn.commit()
+    x,y = zip(*res)
+    plt.scatter(x,y, color = 'red', marker = 'x')
+
+    plt.xticks(rotation = 45)
+    plt.tight_layout()
+    plt.show()
 
 class TestDiscussion12(unittest.TestCase):
     def setUp(self) -> None:
